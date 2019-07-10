@@ -1,0 +1,28 @@
+<div id="chat">
+    <div class="container">
+      <div id="chat-row" class="row justify-content-center align-items-center">
+        <div id="chat-column1" class="col col-lg-5 border border-primary rounded p-5 bg-light">
+          <h3 class="text-info">Room: {{roomName}}</h3>
+          <p class="text-info">{{numberOfUsers}} user(s)</p><br>
+          <div id="chat-history" class="overflow-auto list-group mb-5">
+            <li class="list-group-item list-group-item-action list-group-item-info mb-1">hello</li>
+          </div>
+
+          <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message">
+          <button class="btn btn-success col-sm-3">SEND</button>
+        </div>
+
+        <div id="chat-column2" class="bg-dark col col-sm-3 border border-dark rounded p-5">
+            <div id="sub-row" class="row">
+              <button class="btn btn-success mr-4" id="rooms" routerLink="/home">ROOMS</button>
+              <button class="btn btn-danger" id="logout">LOGOUT</button>
+            </div>
+            <div class="row mt-2 pt-3" id="users">
+              <img src="images/{{photo}}" alt="image" class="border rounded-circle">
+              <p class="text-light ml-3">username</p>
+              <p class="text-light ml-3">online</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>

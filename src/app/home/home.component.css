@@ -1,0 +1,6 @@
+.roomInfo {
+  max-height: 500px;
+  max-width: 330px;
+  overflow: scroll;
+}
+
