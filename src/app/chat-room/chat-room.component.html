@@ -1,11 +1,13 @@
 <div id="chat">
     <div class="container">
-      <div id="chat-row" class="row justify-content-center align-items-center">
+      <div id="chat-row" class="row justify-content-center align-items-start">
         <div id="chat-column1" class="col col-lg-5 border border-primary rounded p-5 bg-light">
           <h3 class="text-info">Room: {{roomName}}</h3>
           <p class="text-info">{{numberOfUsers}} user(s)</p><br>
           <div id="chat-history" class="overflow-auto list-group mb-5">
-            <li class="list-group-item list-group-item-action list-group-item-info mb-1">hello</li>
+            <div id="chat-message" class="list-group-item list-group-item-info mb-1">
+              <strong>username, </strong><small class="text-secondary text-right mb-0 pb-0">time and date</small><br>- message-text
+            </div>
           </div>
 
           <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message">
