@@ -6,20 +6,46 @@ const app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 
-var userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true
-  },
-  gender: String,
-  birthdate: Date,
-  password: String
-},
-{
-  versionKey: false
-});
+// var userSchema = new mongoose.Schema({
+//   username: {
+//     type: String,
+//     unique: true
+//   },
+//   gender: String,
+//   birthdate: Date,
+//   password: String
+// },
+// {
+//   versionKey: false
+// });
 
-var User = mongoose.model('users', userSchema, 'users');
+// var User = mongoose.model('users', userSchema, 'users');
+
+// var roomSchema = new mongoose.Schema({
+//   roomName: {
+//     type: String,
+//     unique: true
+//   },
+//   chatHistoryID: String,
+//   createdBy: String
+// },
+// {
+//   versionKey: false
+// });
+
+// var Room = mongoose.model('rooms', userSchema, 'rooms');
+
+// var chatMessageSchema = new mongoose.Schema({
+//   sender: String,
+//   timeDate: Date,
+//   messageText: String,
+//   roomID: String
+// },
+// {
+//   versionKey: false
+// });
+
+// var chatMessage = mongoose.model('chatHistory', userSchema, 'chatHistory');
 
 app.use(bodyparser.urlencoded( { extended: true } ));
 app.use(bodyparser.json());
@@ -74,19 +100,18 @@ app.post('/login', function(req, res) {
 
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  console.log('new connection made');
 
-  socket.on('disconnect', (socket) => {
-    console.log('a user left');
+  socket.on('join', (data) => {
+    socket.join(data.roomName);
+
+    console.log(data.username + ' joined Room: ' + data.roomName);
+
+    socket.broadcast.to(data.roomName).emit('new user joined', {
+      username: data.username,
+      message: 'has joined the room'
+    });
   })
-
-  socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-  });
-
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
 
 });
 
