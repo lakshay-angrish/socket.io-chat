@@ -1,45 +1,53 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import io from 'socket.io-client';
-import { Router } from '@angular/router';
-// import { ChatService } from '../chat.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { ChatService } from '../chat.service';
 
 @Component({
   selector: 'app-chat-room',
   templateUrl: './chat-room.component.html',
   styleUrls: ['./chat-room.component.css'],
-  // providers: [ChatService]
+  providers: [ChatService]
 })
-// @Injectable()
+
 export class ChatRoomComponent implements OnInit {
-  roomName = 'Public';
+  roomName = '';
   numberOfUsers = 0;
   messageToSend = '';
   dateTime = Date().split('G', 2)[0];
   username = sessionStorage.getItem('username');
   messageText = 'message';
-  socket = io('http://localhost:3000');
+  messageArray: Array<{username: string, message: string}> = [];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(args => {
+      this.roomName = args.roomName;
+    });
+
     if (this.username === null) {
       alert('You Must Login First!');
       this.router.navigateByUrl('');
     }
-    this.getChatHistory();
-  }
-
-  sendMessage() {
-    this.socket.emit('chat message', this.messageToSend);
-
-    this.socket.on('chat message', (msg) => {
-      console.log(msg);
+    if (this.roomName === null) {
+      alert('You Must Join a Room First!');
+      this.router.navigateByUrl('home');
+    }
+    this.joinRoom();
+    this.chatService.newUserJoined().subscribe(data => {
+      this.messageArray.push(data);
     });
   }
 
-  getChatHistory() {
-
+  joinRoom() {
+    const data = {
+      username: sessionStorage.getItem('username'),
+      roomName: this.roomName
+    };
+    this.chatService.joinRoom(data);
   }
 
 }
