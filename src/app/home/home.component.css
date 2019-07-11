@@ -1,6 +1,10 @@
 .roomInfo {
-  max-height: 500px;
+  max-height:400px;
   max-width: 330px;
   overflow: scroll;
 }
 
+.roomInfo button{
+  margin-top: 5px;
+  margin-bottom: 7px;
+}
