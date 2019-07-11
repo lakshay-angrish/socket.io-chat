@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -6,10 +7,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  showLogoutButton = false;
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(private router: Router) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.ngOnInit();
+      }
+    });
   }
 
+  ngOnInit() {
+    if (sessionStorage.getItem('username') === null) {
+      this.showLogoutButton = false;
+    } else {
+      this.showLogoutButton = true;
+    }
+  }
+
+  logout() {
+    sessionStorage.clear();
+    this.router.navigateByUrl('');
+  }
 }
