@@ -6,12 +6,12 @@
           <p class="text-info">{{numberOfUsers}} user(s)</p><br>
           <div id="chat-history" class="overflow-auto list-group mb-5">
             <div id="chat-message" class="list-group-item list-group-item-info mb-1">
-              <strong>username, </strong><small class="text-secondary text-right mb-0 pb-0">time and date</small><br>- message-text
+                  <strong>{{username}}, </strong><small id="dateTime">{{dateTime}}</small><br>- {{messageText}}
             </div>
           </div>
 
-          <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message">
-          <button class="btn btn-success col-sm-3">SEND</button>
+          <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message" [(ngModel)]="messageToSend">
+          <button id="sendButton" class="btn btn-success col-sm-3" (click)="sendMessage()">SEND</button>
         </div>
 
         <div id="chat-column2" class="bg-dark col col-sm-3 border border-dark rounded p-5">
@@ -28,3 +28,4 @@
       </div>
     </div>
   </div>
+

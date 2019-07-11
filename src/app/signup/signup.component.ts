@@ -13,7 +13,7 @@ export class SignupComponent implements OnInit {
   birthdate: Date;
   password: string;
   confirmPassword: string;
-  msg: string;
+  errorMessage: string;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -31,13 +31,14 @@ export class SignupComponent implements OnInit {
 
       this.http.post('http://localhost:3000/signup', args, {responseType: 'text'}).subscribe(
         (response) => {
-          this.msg = response;
+          this.errorMessage = response;
+          alert('Please Login to Proceed');
+          this.router.navigateByUrl('');
         },
         (error) => {
-          this.msg = error;
+          this.errorMessage = error;
         }
       );
     }
-    this.router.navigateByUrl('home');
   }
 }
