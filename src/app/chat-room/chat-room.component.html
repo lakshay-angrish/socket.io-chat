@@ -16,7 +16,7 @@
 
         <div id="chat-column2" class="bg-dark col col-sm-3 border border-dark rounded p-5">
             <div id="sub-row" class="row">
-              <button class="btn btn-success mr-4" id="rooms" routerLink="/home">ROOMS</button>
+              <button class="btn btn-success mr-4" id="rooms" routerLink="/home" (click)="leaveRoom()">ROOMS</button>
             </div>
             <div class="row mt-2 pt-3" id="users">
               <img src="images/{{photo}}" alt="image" class="border rounded-circle">

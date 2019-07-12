@@ -24,4 +24,18 @@ export class ChatService {
     });
     return observable;
   }
+
+  leaveRoom(data) {
+    this.socket.emit('leave', data);
+  }
+
+  userLeftTheRoom() {
+    const observable = new Observable<{username: string, message: string}>(observer => {
+      this.socket.on('left the room', data => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };
+    });
+    return observable;
+  }
 }

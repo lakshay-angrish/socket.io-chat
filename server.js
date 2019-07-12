@@ -6,32 +6,32 @@ const app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 
-// var userSchema = new mongoose.Schema({
-//   username: {
-//     type: String,
-//     unique: true
-//   },
-//   gender: String,
-//   birthdate: Date,
-//   password: String
-// },
-// {
-//   versionKey: false
-// });
+var userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    unique: true
+  },
+  gender: String,
+  birthdate: Date,
+  password: String
+},
+{
+  versionKey: false
+});
 
-// var User = mongoose.model('users', userSchema, 'users');
+var User = mongoose.model('users', userSchema, 'users');
 
-// var roomSchema = new mongoose.Schema({
-//   roomName: {
-//     type: String,
-//     unique: true
-//   },
-//   chatHistoryID: String,
-//   createdBy: String
-// },
-// {
-//   versionKey: false
-// });
+var roomSchema = new mongoose.Schema({
+  roomName: {
+    type: String,
+    unique: true
+  },
+  chatHistoryID: String,
+  createdBy: String
+},
+{
+  versionKey: false
+});
 
 // var Room = mongoose.model('rooms', userSchema, 'rooms');
 
@@ -102,6 +102,10 @@ app.post('/login', function(req, res) {
 io.on('connection', (socket) => {
   console.log('new connection made');
 
+  socket.on('disconnect', (data) => {
+    console.log('a connection broken');
+  });
+
   socket.on('join', (data) => {
     socket.join(data.roomName);
 
@@ -111,7 +115,18 @@ io.on('connection', (socket) => {
       username: data.username,
       message: 'has joined the room'
     });
-  })
+  });
+
+  socket.on('leave', (data) => {
+    console.log(data.username + ' has left the Room: ' + data.roomName);
+
+    socket.broadcast.to(data.roomName).emit('left the room', {
+      username: data.username,
+      message: 'has left the room'
+    });
+
+    socket.leave(data.roomName);
+  });
 
 });
 
