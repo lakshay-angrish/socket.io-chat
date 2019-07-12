@@ -29,4 +29,9 @@ export class HeaderComponent implements OnInit {
     sessionStorage.clear();
     this.router.navigateByUrl('');
   }
+
+  // tslint:disable-next-line:use-lifecycle-interface
+  ngOnDestroy() {
+    sessionStorage.clear();
+  }
 }

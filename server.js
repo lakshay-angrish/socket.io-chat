@@ -128,6 +128,13 @@ io.on('connection', (socket) => {
     socket.leave(data.roomName);
   });
 
+  socket.on('message', (data) => {
+    io.in(data.roomName).emit('new message', {
+      username: data.username,
+      message: data.message
+    });
+  });
+
 });
 
 

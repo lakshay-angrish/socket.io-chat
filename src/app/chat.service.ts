@@ -38,4 +38,18 @@ export class ChatService {
     });
     return observable;
   }
+
+  sendMessage(data) {
+    this.socket.emit('message', data);
+  }
+
+  receiveNewMessage() {
+    const observable = new Observable<{username: string, message: string}>(observer => {
+      this.socket.on('new message', data => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };
+    });
+    return observable;
+  }
 }

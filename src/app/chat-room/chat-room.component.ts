@@ -17,7 +17,7 @@ export class ChatRoomComponent implements OnInit {
   messageToSend = '';
   dateTime = Date().split('G', 2)[0];
   username = sessionStorage.getItem('username');
-  messageText = 'message';
+  messageText = '';
   messageArray: Array<{username: string, message: string}> = [];
 
   constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute) {
@@ -44,6 +44,10 @@ export class ChatRoomComponent implements OnInit {
     this.chatService.userLeftTheRoom().subscribe(data => {
       this.messageArray.push(data);
     });
+
+    this.chatService.receiveNewMessage().subscribe(data => {
+      this.messageArray.push(data);
+    });
   }
 
   ngOnInit() {
@@ -63,6 +67,16 @@ export class ChatRoomComponent implements OnInit {
       roomName: this.roomName
     };
     this.chatService.leaveRoom(data);
+  }
+
+  sendMessage() {
+    const data = {
+      username: sessionStorage.getItem('username'),
+      roomName: this.roomName,
+      message: this.messageText
+    };
+    this.messageText = '';
+    this.chatService.sendMessage(data);
   }
 
 }
