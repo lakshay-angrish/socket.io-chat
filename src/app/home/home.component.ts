@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import io from 'socket.io-client';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,14 +9,49 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   numberOfRooms = 0;
+  newRoomName = ' ';
   roomName = 'Public';
+  allRooms: any[];
 
   constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
+    this.getAllRooms();
   }
 
-  createNewRoom() {
+  getAllRooms() {
+    this.http.get('http://localhost:3000/getAllRooms', {responseType: 'json'}).subscribe(
+      (response: any[]) => {
+        this.numberOfRooms = response.length;
+        if (this.numberOfRooms > 0) {
+          this.allRooms = response;
+          console.log(this.allRooms);
+        } else {
+          alert('No Rooms Available');
+        }
+      },
+      (error) => {
+        alert(error.message);
+      }
+    );
+  }
 
+  createRoom() {
+    const args = {
+      roomName: this.newRoomName,
+      usersInRoom: []
+    };
+
+    this.http.post('http://localhost:3000/createRoom', args, {responseType: 'text'}).subscribe(
+      (response) => {
+        alert(response);
+        alert('Click room to join!');
+      },
+      (error) => {
+        alert(error.message);
+      }
+    );
+
+    this.getAllRooms();
   }
 }

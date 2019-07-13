@@ -6,12 +6,12 @@
             <div class="form-group">
                 <label for="newRoomName" class="text-info">New Room Name:</label><br>
                 <input type="text" name="newRoomName" id="newRoomName" class="mr-4" [(ngModel)]="newRoomName">
-                <button class="btn btn-success" id="createRoom">CREATE</button>
+                <button class="btn btn-success" id="createRoom" (click)="createRoom()">CREATE</button>
             </div>
             <div class="form-group">
               <h4 class="text-center text-info mt-5">Available Rooms ({{numberOfRooms}})</h4>
-              <div class="roomInfo">
-                <a routerLink="/chat-room" [queryParams]="{roomName: roomName}" class="btn btn-success form-control">{{roomName}}</a><br>
+              <div class="roomInfo" *ngFor="let room of allRooms">
+                <a routerLink="/chat-room" [queryParams]="{roomName: room.roomName}" class="btn btn-success form-control">{{room.roomName}}</a><br>
               </div>
             </div>
         </form>

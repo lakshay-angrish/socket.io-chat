@@ -6,6 +6,29 @@ const app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 
+const dbURL = 'mongodb://localhost/chat-io';
+
+mongoose.connect(dbURL, { useNewUrlParser: true });
+
+mongoose.connection.on('connected', function(){
+  console.log("Mongoose default connection is open to " + dbURL);
+});
+
+mongoose.connection.on('error', function(err){
+  console.log("Mongoose default connection has occurred "+err+" error");
+});
+
+mongoose.connection.on('disconnected', function(){
+  console.log("Mongoose default connection is disconnected");
+});
+
+process.on('SIGINT', function(){
+  mongoose.connection.close(function(){
+      console.log(termination("Mongoose default connection is disconnected due to application termination"));
+      process.exit(0)
+  });
+});
+
 var userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -26,26 +49,28 @@ var roomSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  chatHistoryID: String,
-  createdBy: String
+  usersInRoom: [String]
 },
 {
   versionKey: false
 });
 
-// var Room = mongoose.model('rooms', userSchema, 'rooms');
+var Room = mongoose.model('rooms', roomSchema, 'rooms');
 
-// var chatMessageSchema = new mongoose.Schema({
-//   sender: String,
-//   timeDate: Date,
-//   messageText: String,
-//   roomID: String
-// },
-// {
-//   versionKey: false
-// });
+var chatMessageSchema = new mongoose.Schema({
+  sender: String,
+  timeDate: {
+    type: Date,
+    unique: true
+  },
+  messageText: String,
+  roomName: String
+},
+{
+  versionKey: false
+});
 
-// var chatMessage = mongoose.model('chatHistory', userSchema, 'chatHistory');
+var chatMessage = mongoose.model('chatHistory', chatMessageSchema, 'chatHistory');
 
 app.use(bodyparser.urlencoded( { extended: true } ));
 app.use(bodyparser.json());
@@ -59,8 +84,6 @@ app.use(function (req, res, next) {
  });
 
 app.post('/signup', function(req, res) {
-  mongoose.connect('mongodb://localhost/chat-io', { useNewUrlParser: true });
-
   var newUser = new User({
     username: req.body.username,
     gender: req.body.gender,
@@ -75,12 +98,10 @@ app.post('/signup', function(req, res) {
     } else {
       res.send('Signup Successful!');
     }
-    mongoose.connection.close();
   });
 });
 
 app.post('/login', function(req, res) {
-  mongoose.connect('mongodb://localhost/chat-io', { useNewUrlParser: true });
   console.log(req.body);
 
   User.find({
@@ -94,10 +115,38 @@ app.post('/login', function(req, res) {
       console.log(data);
       res.send(data);
     }
-    mongoose.connection.close();
   });
 });
 
+app.get('/getAllRooms', (req, res) => {
+  Room.find((error, data) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  })
+});
+
+app.post('/createRoom', (req, res) => {
+  console.log(req.body);
+
+  var newRoom = new Room({
+    roomName: req.body.roomName,
+    usersInRoom: req.body.usersInRoom
+  });
+
+  newRoom.save(function(error) {
+    if (error) {
+      console.log(error);
+      res.send('Error while creating room. Try again.');
+    } else {
+      res.send('Room Created!');
+    }
+  })
+});
 
 io.on('connection', (socket) => {
   console.log('new connection made');
