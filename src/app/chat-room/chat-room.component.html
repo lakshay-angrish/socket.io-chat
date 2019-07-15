@@ -1,8 +1,8 @@
 <div id="chat">
     <div class="container">
       <div id="chat-row" class="row justify-content-center align-items-start">
-        <div id="chat-column1" class="col col-lg-5 border border-primary rounded p-5 bg-light">
-          <button class="btn btn-lg btn-block btn-info">Room: {{roomName}}</button>
+        <div id="chat-column1" class="col col-lg-6 border border-primary rounded p-5 bg-light">
+          <button class="btn btn-lg btn-block btn-primary" disabled>Room: {{roomName}}</button>
           <br><br>
           <div id="chat-history" class="overflow-auto list-group mb-5">
             <div id="chat-message" class="list-group-item list-group-item-info mb-1" *ngFor="let item of messageArray">
@@ -14,14 +14,16 @@
           <button id="sendButton" class="btn btn-success col-sm-3" (click)="sendMessage()">SEND</button>
         </div>
 
-        <div id="chat-column2" class="bg-dark col col-sm-3 border border-dark rounded p-5">
-            <div id="sub-row" class="row">
-              <button class="btn btn-success mr-4 btn-block" id="rooms" routerLink="/home" (click)="leaveRoom()">ROOMS</button>
-            </div>
-            <p class="text-left text-success mt-4">{{ numberOfUsers }} Online</p>
-            <div class="mt-2 pt-3" id="usersInRoom">
-              <li class="text-light" *ngFor="let user of usersInRoom"><img src="../../images/online.png" height="10px"> {{user}}</li>
-            </div>
+        <div id="chat-column2" class="bg-white col col-sm-4 border border-dark rounded p-5">
+          <div id="sub-col" class="btn-group btn-group-justified">
+            <button class="btn btn-outline-success" id="rooms" routerLink="/home" (click)="leaveRoom()">View Rooms</button>
+            <button class="btn btn-outline-danger" id="clearChat" (click)="clearChatHistory()">Clear Chat</button>
+          </div>
+
+          <p class="text-left text-success mt-4">{{ numberOfUsers }} Online</p>
+          <div class="mt-2 pt-3" id="usersInRoom">
+            <li class="text-dark" *ngFor="let user of usersInRoom"><img src="../../images/online.png" height="10px"> {{user}}</li>
+          </div>
         </div>
       </div>
     </div>

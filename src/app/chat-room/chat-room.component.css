@@ -13,3 +13,13 @@ div {
 #usersInRoom {
   font-size: 15px;
 }
+
+#rooms{
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#clearChat {
+  padding-left: 25px;
+  padding-right: 25px;
+}

@@ -24,7 +24,7 @@ mongoose.connection.on('disconnected', function(){
 
 process.on('SIGINT', function(){
   mongoose.connection.close(function(){
-      console.log(termination("Mongoose default connection is disconnected due to application termination"));
+      console.log("Mongoose default connection is disconnected due to application termination");
       process.exit(0)
   });
 });
@@ -59,10 +59,7 @@ var Room = mongoose.model('rooms', roomSchema, 'rooms');
 
 var chatMessageSchema = new mongoose.Schema({
   sender: String,
-  timeDate: {
-    type: String,
-    unique: true
-  },
+  timeDate: String,
   messageText: String,
   roomName: String
 },
@@ -158,6 +155,52 @@ app.get('/getUsersInRoom', (req, res) => {
     } else {
       console.log(data);
       res.send(data);
+    }
+  });
+});
+
+app.post('/postChat', (req, res) => {
+  console.log(req.body);
+
+  var newChat = new chatMessage({
+    sender: req.body.username,
+    roomName: req.body.roomName,
+    messageText: req.body.message,
+    timeDate: req.body.timeDate
+  });
+
+  newChat.save(function(error) {
+    if (error) {
+      console.log(error);
+      res.send('Error while saving chat. Try again.');
+    } else {
+      res.send('Chat Saved!');
+    }
+  })
+});
+
+app.get('/getChatHistory', (req, res) => {
+  chatMessage.find({
+    roomName: req.query.roomName
+  }, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  });
+});
+
+app.delete('/clearChatHistory', (req, res) => {
+  chatMessage.deleteMany({
+    roomName: req.query.roomName
+  }, (error) => {
+    if (error) {
+      res.send(error);
+    } else {
+      res.send('Chat History Cleared');
     }
   });
 });

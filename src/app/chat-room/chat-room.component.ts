@@ -56,6 +56,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getChatHistory();
   }
 
   joinRoom() {
@@ -89,6 +90,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     };
     this.messageText = '';
     this.chatService.sendMessage(data);
+    this.postChat(data);
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
@@ -114,5 +116,50 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     );
+  }
+
+  postChat(message) {
+    this.http.post('http://localhost:3000/postChat', message, { responseType: 'text' }).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  getChatHistory() {
+    this.http.get('http://localhost:3000/getChatHistory?roomName=' + this.roomName, { responseType: 'json' }).subscribe(
+      (response: any[]) => {
+        for (let i = 0; i !== response.length; i++) {
+          const data = {
+            username: response[i].sender,
+            timeDate: response[i].timeDate,
+            message: response[i].messageText
+          };
+          this.messageArray.push(data);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  clearChatHistory() {
+    const sure = confirm('This will delete chats from the database. Are you sure?');
+
+    if (sure) {
+      this.messageArray = [];
+      this.http.delete('http://localhost:3000/clearChatHistory?roomName=' + this.roomName, { responseType: 'text'}).subscribe(
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
   }
 }
