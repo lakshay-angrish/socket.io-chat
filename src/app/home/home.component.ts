@@ -25,7 +25,6 @@ export class HomeComponent implements OnInit {
         this.numberOfRooms = response.length;
         if (this.numberOfRooms > 0) {
           this.allRooms = response;
-          console.log(this.allRooms);
         }
       },
       (error) => {
@@ -43,13 +42,12 @@ export class HomeComponent implements OnInit {
     this.http.post('http://localhost:3000/createRoom', args, {responseType: 'text'}).subscribe(
       (response) => {
         alert(response);
-        alert('Click room to join!');
+        this.getAllRooms();
       },
       (error) => {
         alert(error.message);
       }
     );
 
-    this.getAllRooms();
   }
 }

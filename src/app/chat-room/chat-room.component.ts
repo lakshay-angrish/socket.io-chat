@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChatService } from '../chat.service';
 import { HttpClient } from '@angular/common/http';
@@ -89,6 +89,11 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     };
     this.messageText = '';
     this.chatService.sendMessage(data);
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  beforeUnloadHandler(event) {
+    this.leaveRoom();
   }
 
   ngOnDestroy() {
