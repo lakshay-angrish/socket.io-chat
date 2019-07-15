@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import io from 'socket.io-client';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private socket = io('http://localhost:3000');
+  public socket = io('http://localhost:3000');
+  usersInRoom: any;
 
-  constructor(private router: Router) { }
+  constructor(private http: HttpClient) { }
 
   joinRoom(data) {
     this.socket.emit('join', data);
   }
 
   newUserJoined() {
-    const observable = new Observable<{username: string, message: string}>(observer => {
+    const observable = new Observable<{username: string, message: string, timeDate: string}>(observer => {
       this.socket.on('new user joined', data => {
         observer.next(data);
       });
@@ -30,7 +31,7 @@ export class ChatService {
   }
 
   userLeftTheRoom() {
-    const observable = new Observable<{username: string, message: string}>(observer => {
+    const observable = new Observable<{username: string, message: string, timeDate: string}>(observer => {
       this.socket.on('left the room', data => {
         observer.next(data);
       });
@@ -44,7 +45,7 @@ export class ChatService {
   }
 
   receiveNewMessage() {
-    const observable = new Observable<{username: string, message: string}>(observer => {
+    const observable = new Observable<{username: string, message: string, timeDate: string}>(observer => {
       this.socket.on('new message', data => {
         observer.next(data);
       });
@@ -52,4 +53,5 @@ export class ChatService {
     });
     return observable;
   }
+
 }

@@ -26,8 +26,6 @@ export class HomeComponent implements OnInit {
         if (this.numberOfRooms > 0) {
           this.allRooms = response;
           console.log(this.allRooms);
-        } else {
-          alert('No Rooms Available');
         }
       },
       (error) => {

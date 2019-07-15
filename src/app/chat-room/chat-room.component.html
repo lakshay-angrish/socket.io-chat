@@ -2,11 +2,11 @@
     <div class="container">
       <div id="chat-row" class="row justify-content-center align-items-start">
         <div id="chat-column1" class="col col-lg-5 border border-primary rounded p-5 bg-light">
-          <h3 class="text-info">Room: {{roomName}}</h3>
-          <p class="text-info">{{numberOfUsers}} user(s)</p><br>
+          <button class="btn btn-lg btn-block btn-info">Room: {{roomName}}</button>
+          <br><br>
           <div id="chat-history" class="overflow-auto list-group mb-5">
             <div id="chat-message" class="list-group-item list-group-item-info mb-1" *ngFor="let item of messageArray">
-                  <strong>{{item.username}}, </strong><small id="dateTime">{{dateTime}}</small><br>- {{item.message}}
+                  <strong>{{item.username}}, </strong><small id="dateTime">{{item.timeDate}}</small><br>- {{item.message}}
             </div>
           </div>
 
@@ -16,12 +16,11 @@
 
         <div id="chat-column2" class="bg-dark col col-sm-3 border border-dark rounded p-5">
             <div id="sub-row" class="row">
-              <button class="btn btn-success mr-4" id="rooms" routerLink="/home" (click)="leaveRoom()">ROOMS</button>
+              <button class="btn btn-success mr-4 btn-block" id="rooms" routerLink="/home" (click)="leaveRoom()">ROOMS</button>
             </div>
-            <div class="row mt-2 pt-3" id="users">
-              <img src="images/{{photo}}" alt="image" class="border rounded-circle">
-              <p class="text-light ml-3">username</p>
-              <p class="text-light ml-3">online</p>
+            <p class="text-left text-success mt-4">{{ numberOfUsers }} Online</p>
+            <div class="mt-2 pt-3" id="usersInRoom">
+              <li class="text-light" *ngFor="let user of usersInRoom"><img src="../../images/online.png" height="10px"> {{user}}</li>
             </div>
         </div>
       </div>

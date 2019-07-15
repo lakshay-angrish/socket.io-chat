@@ -1,8 +1,7 @@
-import { Component, OnInit} from '@angular/core';
-import io from 'socket.io-client';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
 import { ChatService } from '../chat.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-chat-room',
@@ -11,16 +10,20 @@ import { ChatService } from '../chat.service';
   providers: [ChatService]
 })
 
-export class ChatRoomComponent implements OnInit {
+export class ChatRoomComponent implements OnInit, OnDestroy {
   roomName = '';
   numberOfUsers = 0;
   messageToSend = '';
   dateTime = Date().split('G', 2)[0];
   username = sessionStorage.getItem('username');
   messageText = '';
-  messageArray: Array<{username: string, message: string}> = [];
+  messageArray: Array<{username: string, message: string, timeDate: string}> = [];
+  usersInRoom: string[] = [];
+  observable1: any;
+  observable2: any;
+  observable3: any;
 
-  constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute) {
+  constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute, private http: HttpClient) {
     this.route.queryParams.subscribe(args => {
       this.roomName = args.roomName;
     });
@@ -37,15 +40,17 @@ export class ChatRoomComponent implements OnInit {
 
     this.joinRoom();
 
-    this.chatService.newUserJoined().subscribe(data => {
+    this.observable1 = this.chatService.newUserJoined().subscribe(data => {
       this.messageArray.push(data);
+      this.getUsersInRoom();
     });
 
-    this.chatService.userLeftTheRoom().subscribe(data => {
+    this.observable2 = this.chatService.userLeftTheRoom().subscribe(data => {
       this.messageArray.push(data);
+      this.getUsersInRoom();
     });
 
-    this.chatService.receiveNewMessage().subscribe(data => {
+    this.observable3 = this.chatService.receiveNewMessage().subscribe(data => {
       this.messageArray.push(data);
     });
   }
@@ -55,28 +60,54 @@ export class ChatRoomComponent implements OnInit {
 
   joinRoom() {
     const data = {
-      username: sessionStorage.getItem('username'),
-      roomName: this.roomName
+      username: this.username,
+      roomName: this.roomName,
+      timeDate: Date().split('G', 2)[0]
     };
     this.chatService.joinRoom(data);
+
+    setTimeout(() => {
+      this.getUsersInRoom();
+    }, 1000);
   }
 
   leaveRoom() {
     const data = {
-      username: sessionStorage.getItem('username'),
-      roomName: this.roomName
+      username: this.username,
+      roomName: this.roomName,
+      timeDate: Date().split('G', 2)[0]
     };
     this.chatService.leaveRoom(data);
   }
 
   sendMessage() {
     const data = {
-      username: sessionStorage.getItem('username'),
+      username: this.username,
       roomName: this.roomName,
-      message: this.messageText
+      message: this.messageText,
+      timeDate: Date().split('G', 2)[0]
     };
     this.messageText = '';
     this.chatService.sendMessage(data);
   }
 
+  ngOnDestroy() {
+    console.log('ngondestroy');
+    this.observable1.unsubscribe();
+    this.observable2.unsubscribe();
+    this.observable3.unsubscribe();
+  }
+
+  getUsersInRoom() {
+    this.http.get('http://localhost:3000/getUsersInRoom?roomName=' + this.roomName, { responseType: 'json'}).subscribe(
+      (response: any[]) => {
+        console.log(response[0].usersInRoom);
+        this.usersInRoom = response[0].usersInRoom;
+        this.numberOfUsers = this.usersInRoom.length;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 }

@@ -5,3 +5,11 @@
 #chat-message{
   font-size: 14px;
 }
+
+div {
+  list-style: none; /* Remove default bullets */
+}
+
+#usersInRoom {
+  font-size: 15px;
+}

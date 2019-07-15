@@ -60,7 +60,7 @@ var Room = mongoose.model('rooms', roomSchema, 'rooms');
 var chatMessageSchema = new mongoose.Schema({
   sender: String,
   timeDate: {
-    type: Date,
+    type: String,
     unique: true
   },
   messageText: String,
@@ -148,30 +148,94 @@ app.post('/createRoom', (req, res) => {
   })
 });
 
+app.get('/getUsersInRoom', (req, res) => {
+  Room.find({
+    roomName: req.query.roomName
+  }, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  });
+});
+
 io.on('connection', (socket) => {
   console.log('new connection made');
 
-  socket.on('disconnect', (data) => {
-    console.log('a connection broken');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
   });
 
   socket.on('join', (data) => {
     socket.join(data.roomName);
-
     console.log(data.username + ' joined Room: ' + data.roomName);
+    socket.nickname = data.username;
+
+    var usersInRoom = [];
+    io.of('/').in(data.roomName).clients((error, clients) => {
+      if (error) throw error;
+
+      clients.forEach(element => {
+        usersInRoom.push(io.of('/').in(data.roomName).connected[element].nickname);
+      });
+
+      Room.updateOne({
+        roomName: data.roomName
+      }, {
+        $set: {
+          usersInRoom: usersInRoom
+        }
+      }, (error, data) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(data);
+        }
+      });
+    });
 
     socket.broadcast.to(data.roomName).emit('new user joined', {
       username: data.username,
-      message: 'has joined the room'
+      message: 'has joined the room',
+      timeDate: data.timeDate
     });
   });
 
   socket.on('leave', (data) => {
     console.log(data.username + ' has left the Room: ' + data.roomName);
 
+    var usersInRoom = [];
+    io.of('/').in(data.roomName).clients((error, clients) => {
+      if (error) throw error;
+      clients.forEach(element => {
+        usersInRoom.push(io.of('/').in(data.roomName).connected[element].nickname);
+      });
+
+      const index = usersInRoom.indexOf(data.username);
+      usersInRoom.splice(index, 1);
+
+      Room.updateOne({
+        roomName: data.roomName
+      }, {
+        $set: {
+          usersInRoom: usersInRoom
+        }
+      }, (error, data) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(data);
+        }
+      });
+    });
+
     socket.broadcast.to(data.roomName).emit('left the room', {
       username: data.username,
-      message: 'has left the room'
+      message: 'has left the room',
+      timeDate: data.timeDate
     });
 
     socket.leave(data.roomName);
@@ -180,7 +244,8 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
     io.in(data.roomName).emit('new message', {
       username: data.username,
-      message: data.message
+      message: data.message,
+      timeDate: data.timeDate
     });
   });
 
