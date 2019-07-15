@@ -3,7 +3,7 @@
     <div id="login-row" class="row justify-content-center align-items-center">
       <div id="login-column" class="col-md-4 border border-info rounded">
         <div id="login-box" class="col-md-12">
-          <div id="login-form" class="form" method="post">
+          <form id="login-form" class="form" method="post">
             <br><br>
             <h3 class="text-center text-info">Register</h3>
             <div class="form-group">
@@ -33,9 +33,10 @@
               <input type="submit" name="submit" class="btn btn-info btn-md" value="Sign Up" (click)="signUp()">
               <p class="text-center text-danger"><small>{{errorMessage}}</small></p>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+  <div class="container"><br><br></div>
 </div>
