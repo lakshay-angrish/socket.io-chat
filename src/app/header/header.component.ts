@@ -7,7 +7,7 @@ import { Router, NavigationEnd } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  showLogoutButton = false;
+  loggedIn = false;
 
   constructor(private router: Router) {
     router.events.subscribe(event => {
@@ -19,13 +19,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if (sessionStorage.getItem('username') === null) {
-      this.showLogoutButton = false;
+      this.loggedIn = false;
     } else {
-      this.showLogoutButton = true;
+      this.loggedIn = true;
     }
   }
 
   logout() {
+    this.loggedIn = false;
     sessionStorage.clear();
     this.router.navigateByUrl('');
   }

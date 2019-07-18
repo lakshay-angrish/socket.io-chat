@@ -1,4 +1,8 @@
-<nav class="navbar navbar-light bg-light mb-5">
-    <a href="" class="navbar-brand border border-info rounded p-2 text-info">Chat.IO</a>
-    <button class="btn btn-info" (click)="logout()" *ngIf="showLogoutButton">LOGOUT</button>
+<nav class="navbar navbar-expand-sm navbar-light bg-light mb-5">
+    <a href="" class="navbar-brand border border-primary rounded p-2 text-primary">Chat.IO</a>
+    <div class="navbar-nav" *ngIf="loggedIn">
+      <a class="nav-item nav-link text-info" routerLink="profile">Profile</a>
+      <a class="nav-item nav-link text-info" routerLink="home">Join Room</a>
+      <button class="btn btn-sm nav-item nav-link text-info" (click)="logout()">Logout</button>
+    </div>
 </nav>
