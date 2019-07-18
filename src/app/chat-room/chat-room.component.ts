@@ -18,7 +18,8 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   username = sessionStorage.getItem('username');
   messageText = '';
   messageArray: Array<{username: string, message: string, timeDate: string}> = [];
-  usersInRoom: string[] = [];
+  usersInRoom: any[] = [];
+  picture: string;
   observable1: any;
   observable2: any;
   observable3: any;
@@ -69,7 +70,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.getUsersInRoom();
-    }, 1000);
+    }, 100);
   }
 
   leaveRoom() {
@@ -108,9 +109,43 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   getUsersInRoom() {
     this.http.get('http://localhost:3000/getUsersInRoom?roomName=' + this.roomName, { responseType: 'json'}).subscribe(
       (response: any[]) => {
-        console.log(response[0].usersInRoom);
-        this.usersInRoom = response[0].usersInRoom;
-        this.numberOfUsers = this.usersInRoom.length;
+        this.usersInRoom = [];
+        const users: string[] = response[0].usersInRoom;
+        this.numberOfUsers = users.length;
+
+        for (let i = 0; i !== this.numberOfUsers; i++) {
+          // this.picture = this.getUserPhoto(users[i]);
+
+          // setTimeout(() => {
+          //   const userData = {
+          //     username: users[i],
+          //     photo: this.picture
+          //   };
+
+          //   this.usersInRoom.push(userData);
+          //   console.log(userData);
+
+          // }, 200);
+          this.getUserPhoto(users[i]);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  getUserPhoto(user) {
+    this.http.get('http://localhost:3000/getUserPhoto?username=' + user, { responseType: 'json'}).subscribe(
+      (response: any[]) => {
+        this.picture = response[0].photo;
+        const userData = {
+          username: user,
+          photo: this.picture
+        };
+
+        this.usersInRoom.push(userData);
+        console.log(userData);
       },
       (error) => {
         console.log(error);

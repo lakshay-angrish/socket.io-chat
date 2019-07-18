@@ -14,22 +14,29 @@ export class SignupComponent implements OnInit {
   password: string;
   confirmPassword: string;
   errorMessage: string;
+  photo: File;
 
   constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
   }
 
+  photoSelected(event) {
+    this.photo = event.target.files[0];
+  }
+
   signUp() {
     if (this.password === this.confirmPassword) {
-      const args = {
-        username: this.username,
-        gender: this.gender,
-        birthdate: this.birthdate,
-        password: this.password
-      };
+      const data = new FormData();
+      data.append('username', this.username);
+      data.append('gender', this.gender);
+      data.append('birthdate', this.birthdate.toString());
+      data.append('password', this.password);
+      if (this.photo) {
+        data.append('photo', this.photo);
+      }
 
-      this.http.post('http://localhost:3000/signup', args, {responseType: 'text'}).subscribe(
+      this.http.post('http://localhost:3000/signup', data, {responseType: 'text'}).subscribe(
         (response) => {
           this.errorMessage = response;
           alert('Please Login to Proceed');

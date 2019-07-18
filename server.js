@@ -5,6 +5,21 @@ var mongoose = require("mongoose");
 const app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
+const multer = require('multer');
+
+
+const DIR = 'src/uploads';
+var photo;
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, DIR);
+  },
+  filename: (req, file, cb) => {
+     photo = Date.now() + file.originalname;
+     cb(null, photo);
+  }
+ });
+let upload = multer({storage: storage});
 
 const dbURL = 'mongodb://localhost/chat-io';
 
@@ -36,7 +51,8 @@ var userSchema = new mongoose.Schema({
   },
   gender: String,
   birthdate: Date,
-  password: String
+  password: String,
+  photo: String
 },
 {
   versionKey: false
@@ -80,12 +96,16 @@ app.use(function (req, res, next) {
   next();
  });
 
-app.post('/signup', function(req, res) {
+app.post('/signup', upload.single('photo'), function(req, res) {
+  if (!req.file) {
+    photo = 'default.jpg';
+  }
   var newUser = new User({
     username: req.body.username,
     gender: req.body.gender,
     birthdate: req.body.birthdate,
-    password: req.body.password
+    password: req.body.password,
+    photo: photo
   });
 
   newUser.save(function(error) {
@@ -125,6 +145,20 @@ app.get('/getAllRooms', (req, res) => {
       res.send(data);
     }
   })
+});
+
+app.get('/getUserPhoto', (req, res) => {
+  User.find({
+    username: req.query.username
+  }, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  });
 });
 
 app.post('/createRoom', (req, res) => {
