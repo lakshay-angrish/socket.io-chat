@@ -100,7 +100,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngondestroy');
     this.observable1.unsubscribe();
     this.observable2.unsubscribe();
     this.observable3.unsubscribe();
@@ -114,18 +113,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         this.numberOfUsers = users.length;
 
         for (let i = 0; i !== this.numberOfUsers; i++) {
-          // this.picture = this.getUserPhoto(users[i]);
-
-          // setTimeout(() => {
-          //   const userData = {
-          //     username: users[i],
-          //     photo: this.picture
-          //   };
-
-          //   this.usersInRoom.push(userData);
-          //   console.log(userData);
-
-          // }, 200);
           this.getUserPhoto(users[i]);
         }
       },
@@ -136,7 +123,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   getUserPhoto(user) {
-    this.http.get('http://localhost:3000/getUserPhoto?username=' + user, { responseType: 'json'}).subscribe(
+    this.http.get('http://localhost:3000/getUser?username=' + user, { responseType: 'json'}).subscribe(
       (response: any[]) => {
         this.picture = response[0].photo;
         const userData = {

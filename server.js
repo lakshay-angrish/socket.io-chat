@@ -147,7 +147,7 @@ app.get('/getAllRooms', (req, res) => {
   })
 });
 
-app.get('/getUserPhoto', (req, res) => {
+app.get('/getUser', (req, res) => {
   User.find({
     username: req.query.username
   }, (error, data) => {
@@ -235,6 +235,20 @@ app.delete('/clearChatHistory', (req, res) => {
       res.send(error);
     } else {
       res.send('Chat History Cleared');
+    }
+  });
+});
+
+app.delete('/deleteUser', function(req, res) {
+  User.deleteOne({
+    username: req.query.username
+  },
+  function(error) {
+    if (error) {
+      console.log(error);
+      res.send('Server Error: Could Not Delete!')
+    } else {
+      res.send('User Removed');
     }
   });
 });

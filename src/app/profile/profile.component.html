@@ -1,0 +1,21 @@
+<div id="profile">
+  <div class="container profile-container">
+      <div id="profile-row" class="row justify-content-center align-items-center  border border-info rounded">
+          <div id="profile-column1" class="pt-5 pb-4">
+            <ul class="list-group list-group-flush">
+                <img src="uploads/{{photo}}" alt="image-not-found" class="rounded-circle border border-secondary img-thumbnail" height="300px" width="300px">
+            </ul>
+          </div>
+          <div id="profile-column2" class="pt-5 pb-4">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item text-center list-group-item-light">{{gender}}</li>
+              <li class="list-group-item text-center list-group-item-light">Born {{birthdate}}</li>
+              <li class="list-group-item text-center list-group-item-light"><button class="btn btn-outline-success">Change Password</button></li>
+              <li class="list-group-item text-center list-group-item-light"><button class="btn btn-outline-success"></button>Update Photo</button></li>
+              <li class="list-group-item text-center list-group-item-light"><button class="btn btn-outline-danger" (click)="deleteUser()">Delete Account</button></li>
+            </ul>
+          </div>
+      </div>
+  </div>
+  <div class="container"><br><br></div>
+</div>

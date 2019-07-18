@@ -10,6 +10,7 @@ import { SignupComponent } from './signup/signup.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ChatRoomComponent } from './chat-room/chat-room.component';
     SignupComponent,
     HeaderComponent,
     HomeComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
