@@ -11,6 +11,8 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ChangePhotoComponent } from './change-photo/change-photo.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { ProfileComponent } from './profile/profile.component';
     HeaderComponent,
     HomeComponent,
     ChatRoomComponent,
-    ProfileComponent
+    ProfileComponent,
+    ChangePasswordComponent,
+    ChangePhotoComponent
   ],
   imports: [
     BrowserModule,

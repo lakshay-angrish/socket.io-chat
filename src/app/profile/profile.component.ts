@@ -53,4 +53,12 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
+
+  passwordButtonClicked() {
+    this.router.navigateByUrl('change-password');
+  }
+
+  photoButtonClicked() {
+    this.router.navigateByUrl('change-photo');
+  }
 }

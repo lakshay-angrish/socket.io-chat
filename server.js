@@ -253,6 +253,23 @@ app.delete('/deleteUser', function(req, res) {
   });
 });
 
+app.put('/changePassword', (req, res) => {
+  User.updateOne({
+    username: req.body.username,
+    password: req.body.currentPassword
+  }, {
+    password: req.body.newPassword
+  }, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.send('Server Error');
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  });
+});
+
 io.on('connection', (socket) => {
   console.log('new connection made');
 
