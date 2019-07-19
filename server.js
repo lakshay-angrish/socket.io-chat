@@ -240,6 +240,12 @@ app.delete('/clearChatHistory', (req, res) => {
 });
 
 app.delete('/deleteUser', function(req, res) {
+  if (req.query.photo !== 'default.jpg') {
+    fs.unlink('src/uploads/' + req.query.photo, error => {
+      if (error)  throw error;
+      console.log('Old Photo Deleted');
+    });
+  }
   User.deleteOne({
     username: req.query.username
   },
@@ -259,6 +265,33 @@ app.put('/changePassword', (req, res) => {
     password: req.body.currentPassword
   }, {
     password: req.body.newPassword
+  }, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.send('Server Error');
+    } else {
+      console.log(data);
+      res.send(data);
+    }
+  });
+});
+
+app.put('/changePhoto', upload.single('photo'), (req, res) => {
+  if (!req.file) {
+    photo = req.body.currentPhoto;
+  } else {
+    if (req.body.currentPhoto != 'default.jpg') {
+      fs.unlink('src/uploads/' + req.body.currentPhoto, error => {
+        if (error)  throw error;
+        console.log('Old Photo Deleted');
+      });
+    }
+  }
+
+  User.updateOne({
+    username: req.body.username
+  }, {
+    photo: photo
   }, (error, data) => {
     if (error) {
       console.log(error);

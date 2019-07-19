@@ -42,7 +42,8 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteUser() {
-    this.http.delete('http://localhost:3000/deleteUser?username=' + this.username, { responseType: 'text'}).subscribe(
+    this.http.delete('http://localhost:3000/deleteUser?username=' +
+    this.username + '&photo=' + this.photo, { responseType: 'text'}).subscribe(
       (response) => {
         alert(response);
         sessionStorage.clear();
@@ -59,6 +60,6 @@ export class ProfileComponent implements OnInit {
   }
 
   photoButtonClicked() {
-    this.router.navigateByUrl('change-photo');
+    this.router.navigateByUrl('change-photo?currentPhoto=' + this.photo);
   }
 }

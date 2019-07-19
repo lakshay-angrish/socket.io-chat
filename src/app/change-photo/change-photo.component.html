@@ -1,1 +1,21 @@
-<p>change-photo works!</p>
+<div id="changePhoto">
+    <div class="container">
+        <div id="changePhoto-row" class="row justify-content-center align-items-center">
+            <div id="changePhoto-column" class="col-md-4 border border-info rounded pt-5">
+                <div id="changePhoto-box" class="col-md-12 pb-5">
+                    <form id="changePhoto-form" class="form" action="" method="post">
+                        <h3 class="text-center text-info">Change Photo</h3><br>
+                        <div class="form-group">
+                            <label for="newPhoto" class="text-info mb-4">Select New Photo:</label>
+                            <input type="file" name="newPhoto" id="newPhoto" class="form-control-file mb-4" (change)="photoSelected($event)">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" name="submit" class="btn btn-info btn-md" value="Update" (click)="changePhoto()">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container"><br><br></div>
+  </div>
