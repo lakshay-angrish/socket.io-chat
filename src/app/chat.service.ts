@@ -8,7 +8,6 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ChatService {
   public socket = io('http://localhost:3000');
-  usersInRoom: any;
 
   constructor(private http: HttpClient) { }
 
@@ -53,5 +52,4 @@ export class ChatService {
     });
     return observable;
   }
-
 }

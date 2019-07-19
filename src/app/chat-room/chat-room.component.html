@@ -1,5 +1,5 @@
 <div id="chat">
-    <div class="container">
+    <div class="container w-80">
       <div id="chat-row" class="row justify-content-center align-items-start">
         <div id="chat-column1" class="col col-lg-6 border border-primary rounded p-5 bg-light">
           <button class="btn btn-lg btn-block btn-primary" disabled>Room: {{roomName}}</button>
@@ -10,14 +10,16 @@
             </div>
           </div>
 
-          <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message" [(ngModel)]="messageText">
+          <input type="text" id="message" class="col col-md-8 mr-3" placeholder="type message" [(ngModel)]="messageText" (keydown)="typing()">
           <button id="sendButton" class="btn btn-success col-sm-3" (click)="sendMessage()">SEND</button>
         </div>
 
-        <div id="chat-column2" class="bg-white col col-sm-4 border border-dark rounded p-5">
+        <div id="chat-column2" class="bg-white col col-sm-4 p-5">
           <div id="sub-col" class="btn-group btn-group-justified">
-            <button class="btn btn-outline-success" id="rooms" routerLink="/home" (click)="leaveRoom()">View Rooms</button>
-            <button class="btn btn-outline-danger" id="clearChat" (click)="clearChatHistory()">Clear Chat</button>
+            <div class="row-fluid">
+              <button class="btn btn-outline-success btn-block" id="rooms" routerLink="/home" (click)="leaveRoom()">View Rooms</button>
+              <button class="btn btn-outline-danger btn-block" id="clearChat" (click)="clearChatHistory()">Clear Chat</button>
+            </div>
           </div>
 
           <p class="text-left text-success mt-4">{{ numberOfUsers }} Online</p>
@@ -27,6 +29,5 @@
         </div>
       </div>
     </div>
-    <div class="container"><br><br></div>
+    <div class="container"><br><br><p>{{msg}}</p></div>
   </div>
-
