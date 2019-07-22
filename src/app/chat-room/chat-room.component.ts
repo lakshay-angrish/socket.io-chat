@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { ChatService } from '../chat.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -27,6 +27,12 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute, private http: HttpClient) {
     this.route.queryParams.subscribe(args => {
       this.roomName = args.roomName;
+    });
+
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.getUsersInRoom();
+      }
     });
 
     if (this.username === null) {
