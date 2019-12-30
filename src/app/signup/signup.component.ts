@@ -39,10 +39,11 @@ export class SignupComponent implements OnInit {
       this.http.post('http://localhost:3000/signup', data, {responseType: 'text'}).subscribe(
         (response) => {
           this.errorMessage = response;
-          alert('Please Login to Proceed');
+          alert(this.errorMessage);
           this.router.navigateByUrl('');
         },
         (error) => {
+          alert('Server error');
           this.errorMessage = error;
         }
       );

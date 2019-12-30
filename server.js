@@ -98,7 +98,7 @@ app.use(function (req, res, next) {
 
 app.post('/signup', upload.single('photo'), function(req, res) {
   if (!req.file) {
-    photo = 'default.jpg';
+    photo = 'default.jpeg';
   }
   var newUser = new User({
     username: req.body.username,
@@ -240,7 +240,7 @@ app.delete('/clearChatHistory', (req, res) => {
 });
 
 app.delete('/deleteUser', function(req, res) {
-  if (req.query.photo !== 'default.jpg') {
+  if (req.query.photo !== 'default.jpeg') {
     fs.unlink('src/uploads/' + req.query.photo, error => {
       if (error)  throw error;
       console.log('Old Photo Deleted');
@@ -280,7 +280,7 @@ app.put('/changePhoto', upload.single('photo'), (req, res) => {
   if (!req.file) {
     photo = req.body.currentPhoto;
   } else {
-    if (req.body.currentPhoto != 'default.jpg') {
+    if (req.body.currentPhoto != 'default.jpeg') {
       fs.unlink('src/uploads/' + req.body.currentPhoto, error => {
         if (error)  throw error;
         console.log('Old Photo Deleted');
@@ -320,7 +320,9 @@ io.on('connection', (socket) => {
       if (error) throw error;
 
       clients.forEach(element => {
-        usersInRoom.push(io.of('/').in(data.roomName).connected[element].nickname);
+        // usersInRoom.push(io.of('/').in(data.roomName).connected[element].nickname);
+        usersInRoom.push(io.sockets.connected[element].nickname);
+        //console.log(io.sockets.connected[element].nickname);
       });
 
       Room.updateOne({

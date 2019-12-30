@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   numberOfRooms = 0;
-  newRoomName = ' ';
+  newRoomName = '';
   roomName = 'Public';
   allRooms: any[];
 
@@ -34,20 +34,23 @@ export class HomeComponent implements OnInit {
   }
 
   createRoom() {
-    const args = {
-      roomName: this.newRoomName,
-      usersInRoom: []
-    };
+    if (this.newRoomName === '') {
+      alert('Room must have a name!');
+    } else {
+      const args = {
+        roomName: this.newRoomName,
+        usersInRoom: []
+      };
 
-    this.http.post('http://localhost:3000/createRoom', args, {responseType: 'text'}).subscribe(
-      (response) => {
-        alert(response);
-        this.getAllRooms();
-      },
-      (error) => {
-        alert(error.message);
-      }
-    );
-
+      this.http.post('http://localhost:3000/createRoom', args, {responseType: 'text'}).subscribe(
+        (response) => {
+          alert(response);
+          this.getAllRooms();
+        },
+        (error) => {
+          alert(error.message);
+        }
+      );
+    }
   }
 }

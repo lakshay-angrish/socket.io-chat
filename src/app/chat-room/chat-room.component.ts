@@ -32,6 +32,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.getUsersInRoom();
+        this.leaveRoom();
       }
     });
 
