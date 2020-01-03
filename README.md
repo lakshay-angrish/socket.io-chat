@@ -18,4 +18,4 @@ Chat.IO is a real-time web chat app. It uses socket.io for real-time, bidirectio
 2. cd into that directory and run ```npm install```. This will install all dependencies.
 3. run ```sudo systemctl start mongodb``` to activate the database.
 4. run ```nodemon server.js``` to run the node.js server to listen for requests.
-5. open another terminal and run ```ng serve -o```to launch the app. A browser tab would open with the web app live.
+5. navigate to ```http://localhost:3000``` to view the website.
