@@ -2,13 +2,15 @@ const path = require('path');
 const fs = require('fs');
 var bodyparser = require("body-parser");
 var mongoose = require("mongoose");
-const app = require('express')();
+const express = require('express');
+const app = express();
+const cors = require('cors');
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 const multer = require('multer');
 
 
-const DIR = 'src/uploads';
+const DIR = 'dist/io-chat/uploads';
 var photo;
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -87,14 +89,13 @@ var chatMessage = mongoose.model('chatHistory', chatMessageSchema, 'chatHistory'
 
 app.use(bodyparser.urlencoded( { extended: true } ));
 app.use(bodyparser.json());
+app.use(cors());
 
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
- });
+app.use(express.static(__dirname + "/dist/io-chat"));
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 app.post('/signup', upload.single('photo'), function(req, res) {
   if (!req.file) {
@@ -241,7 +242,7 @@ app.delete('/clearChatHistory', (req, res) => {
 
 app.delete('/deleteUser', function(req, res) {
   if (req.query.photo !== 'default.jpeg') {
-    fs.unlink('src/uploads/' + req.query.photo, error => {
+    fs.unlink('dist/io-chat/uploads/' + req.query.photo, error => {
       if (error)  throw error;
       console.log('Old Photo Deleted');
     });
