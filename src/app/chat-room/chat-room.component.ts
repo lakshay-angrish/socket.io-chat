@@ -1,35 +1,43 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { ChatService } from '../chat.service';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";
+import { Router, ActivatedRoute, NavigationStart } from "@angular/router";
+import { ChatService } from "../chat.service";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-chat-room',
-  templateUrl: './chat-room.component.html',
-  styleUrls: ['./chat-room.component.css'],
-  providers: [ChatService]
+  selector: "app-chat-room",
+  templateUrl: "./chat-room.component.html",
+  styleUrls: ["./chat-room.component.css"],
+  providers: [ChatService],
 })
-
 export class ChatRoomComponent implements OnInit, OnDestroy {
-  roomName = '';
+  roomName = "";
   numberOfUsers = 0;
-  messageToSend = '';
-  dateTime = Date().split('G', 2)[0];
-  username = sessionStorage.getItem('username');
-  messageText = '';
-  messageArray: Array<{username: string, message: string, timeDate: string}> = [];
+  messageToSend = "";
+  dateTime = Date().split("G", 2)[0];
+  username = sessionStorage.getItem("username");
+  messageText = "";
+  messageArray: Array<{
+    username: string;
+    message: string;
+    timeDate: string;
+  }> = [];
   usersInRoom: any[] = [];
   picture: string;
   observable1: any;
   observable2: any;
   observable3: any;
 
-  constructor(private router: Router, private chatService: ChatService, private route: ActivatedRoute, private http: HttpClient) {
-    this.route.queryParams.subscribe(args => {
+  constructor(
+    private router: Router,
+    private chatService: ChatService,
+    private route: ActivatedRoute,
+    private http: HttpClient
+  ) {
+    this.route.queryParams.subscribe((args) => {
       this.roomName = args.roomName;
     });
 
-    router.events.subscribe(event => {
+    router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.getUsersInRoom();
         this.leaveRoom();
@@ -37,30 +45,32 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     });
 
     if (this.username === null) {
-      alert('You Must Login First!');
-      this.router.navigateByUrl('');
+      alert("You Must Login First!");
+      this.router.navigateByUrl("");
     }
 
     if (this.roomName === null) {
-      alert('You Must Join a Room First!');
-      this.router.navigateByUrl('home');
+      alert("You Must Join a Room First!");
+      this.router.navigateByUrl("home");
     }
 
     this.joinRoom();
 
-    this.observable1 = this.chatService.newUserJoined().subscribe(data => {
+    this.observable1 = this.chatService.newUserJoined().subscribe((data) => {
       this.messageArray.push(data);
       this.getUsersInRoom();
     });
 
-    this.observable2 = this.chatService.userLeftTheRoom().subscribe(data => {
+    this.observable2 = this.chatService.userLeftTheRoom().subscribe((data) => {
       this.messageArray.push(data);
       this.getUsersInRoom();
     });
 
-    this.observable3 = this.chatService.receiveNewMessage().subscribe(data => {
-      this.messageArray.push(data);
-    });
+    this.observable3 = this.chatService
+      .receiveNewMessage()
+      .subscribe((data) => {
+        this.messageArray.push(data);
+      });
   }
 
   ngOnInit() {
@@ -71,7 +81,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     const data = {
       username: this.username,
       roomName: this.roomName,
-      timeDate: Date().split('G', 2)[0]
+      timeDate: Date().split("G", 2)[0],
     };
     this.chatService.joinRoom(data);
 
@@ -84,7 +94,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     const data = {
       username: this.username,
       roomName: this.roomName,
-      timeDate: Date().split('G', 2)[0]
+      timeDate: Date().split("G", 2)[0],
     };
     this.chatService.leaveRoom(data);
   }
@@ -94,14 +104,14 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       username: this.username,
       roomName: this.roomName,
       message: this.messageText,
-      timeDate: Date().split('G', 2)[0]
+      timeDate: Date().split("G", 2)[0],
     };
-    this.messageText = '';
+    this.messageText = "";
     this.chatService.sendMessage(data);
     this.postChat(data);
   }
 
-  @HostListener('window:beforeunload', [ '$event' ])
+  @HostListener("window:beforeunload", ["$event"])
   beforeUnloadHandler(event) {
     this.leaveRoom();
   }
@@ -113,75 +123,52 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   getUsersInRoom() {
-    this.http.get('http://localhost:3000/getUsersInRoom?roomName=' + this.roomName, { responseType: 'json'}).subscribe(
-      (response: any[]) => {
-        this.usersInRoom = [];
-        const users: string[] = response[0].usersInRoom;
-        this.numberOfUsers = users.length;
+    this.http
+      .get("http://localhost:3000/getUsersInRoom?roomName=" + this.roomName, {
+        responseType: "json",
+      })
+      .subscribe(
+        (response: any[]) => {
+          this.usersInRoom = [];
+          const users: string[] = response[0].usersInRoom;
+          this.numberOfUsers = users.length;
 
-        for (let i = 0; i !== this.numberOfUsers; i++) {
-          this.getUserPhoto(users[i]);
+          for (let i = 0; i !== this.numberOfUsers; i++) {
+            this.getUserPhoto(users[i]);
+          }
+        },
+        (error) => {
+          console.log(error);
         }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+      );
   }
 
   getUserPhoto(user) {
-    this.http.get('http://localhost:3000/getUser?username=' + user, { responseType: 'json'}).subscribe(
-      (response: any[]) => {
-        this.picture = response[0].photo;
-        const userData = {
-          username: user,
-          photo: this.picture
-        };
+    this.http
+      .get("http://localhost:3000/getUser?username=" + user, {
+        responseType: "json",
+      })
+      .subscribe(
+        (response: any[]) => {
+          this.picture = response[0].photo;
+          const userData = {
+            username: user,
+            photo: this.picture,
+          };
 
-        this.usersInRoom.push(userData);
-        console.log(userData);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+          this.usersInRoom.push(userData);
+          console.log(userData);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   postChat(message) {
-    this.http.post('http://localhost:3000/postChat', message, { responseType: 'text' }).subscribe(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  getChatHistory() {
-    this.http.get('http://localhost:3000/getChatHistory?roomName=' + this.roomName, { responseType: 'json' }).subscribe(
-      (response: any[]) => {
-        for (let i = 0; i !== response.length; i++) {
-          const data = {
-            username: response[i].sender,
-            timeDate: response[i].timeDate,
-            message: response[i].messageText
-          };
-          this.messageArray.push(data);
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  clearChatHistory() {
-    const sure = confirm('This will delete chats from the database. Are you sure?');
-
-    if (sure) {
-      this.messageArray = [];
-      this.http.delete('http://localhost:3000/clearChatHistory?roomName=' + this.roomName, { responseType: 'text'}).subscribe(
+    this.http
+      .post("http://localhost:3000/postChat", message, { responseType: "text" })
+      .subscribe(
         (response) => {
           console.log(response);
         },
@@ -189,6 +176,50 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
           console.log(error);
         }
       );
+  }
+
+  getChatHistory() {
+    this.http
+      .get("http://localhost:3000/getChatHistory?roomName=" + this.roomName, {
+        responseType: "json",
+      })
+      .subscribe(
+        (response: any[]) => {
+          for (let i = 0; i !== response.length; i++) {
+            const data = {
+              username: response[i].sender,
+              timeDate: response[i].timeDate,
+              message: response[i].messageText,
+            };
+            this.messageArray.push(data);
+          }
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  clearChatHistory() {
+    const sure = confirm(
+      "This will delete chats from the database. Are you sure?"
+    );
+
+    if (sure) {
+      this.messageArray = [];
+      this.http
+        .delete(
+          "http://localhost:3000/clearChatHistory?roomName=" + this.roomName,
+          { responseType: "text" }
+        )
+        .subscribe(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     }
   }
 }

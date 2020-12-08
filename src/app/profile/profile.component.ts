@@ -29,11 +29,11 @@ export class ProfileComponent implements OnInit {
 
   getUser() {
     this.http.get('http://localhost:3000/getUser?username=' + this.username, { responseType: 'json'}).subscribe(
-      (response: any[]) => {
-        this.photo = response[0].photo;
-        const data = ((response[0].birthdate).split('T', 2))[0];
+      (response: any) => {
+        this.photo = response.photo;
+        const data = ((response.birthdate).split('T', 2))[0];
         this.birthdate = (new Date(Date.parse(data))).toDateString();
-        this.gender = response[0].gender;
+        this.gender = response.gender;
       },
       (error) => {
         console.log(error);
