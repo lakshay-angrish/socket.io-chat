@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
 
   getUser() {
     this.http
-      .get("http://localhost:3000/getUser?username=" + this.username, {
+      .get("http://localhost:3000/getUser", {
         responseType: "json",
         headers: this.httpHeaders,
       })

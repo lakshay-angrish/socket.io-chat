@@ -158,7 +158,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
   getUserPhoto(user) {
     this.http
-      .get("http://localhost:3000/getUser?username=" + user, {
+      .get("http://localhost:3000/getUser", {
         responseType: "json",
         headers: this.httpHeaders,
       })

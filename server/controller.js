@@ -67,9 +67,7 @@ exports.logIn = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-    const user = await User.findOne({
-      username: req.body.username,
-    }).exec();
+    const user = await User.findById(req.user.id).exec();
 
     if (!user) throw new Error("Invalid Credentials");
 
@@ -89,9 +87,7 @@ exports.changePassword = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const user = await User.findOne({
-      username: req.query.username,
-    }).exec();
+    const user = await User.findById(req.user.id).exec();
     if (!user) {
       throw new Error("User not found");
     }
@@ -134,14 +130,9 @@ exports.changePhoto = async (req, res) => {
         });
       }
     }
-    const user = await User.updateOne(
-      {
-        username: req.body.username,
-      },
-      {
-        photo: req.file.path.split("\\")[2],
-      }
-    ).exec();
+    const user = await User.findByIdAndUpdate(req.user.id, {
+      photo: req.file.path.split("\\")[2],
+    }).exec();
     console.log(user);
     res.status(200).send(user);
   } catch (error) {

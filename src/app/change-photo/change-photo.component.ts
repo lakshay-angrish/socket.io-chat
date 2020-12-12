@@ -47,7 +47,6 @@ export class ChangePhotoComponent implements OnInit {
       data.append("photo", this.photo);
     }
     data.append("currentPhoto", this.currentPhoto);
-    data.append("username", this.username);
 
     this.http
       .put("http://localhost:3000/changePhoto", data, {
