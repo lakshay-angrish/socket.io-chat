@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
         (response: any) => {
           console.log(response);
           sessionStorage.setItem("username", this.username);
+          sessionStorage.setItem("token", response.token);
           this.router.navigateByUrl("home");
         },
         (error) => {

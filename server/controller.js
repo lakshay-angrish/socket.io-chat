@@ -2,6 +2,8 @@ const User = require("./models/user");
 const Room = require("./models/room");
 const ChatMessage = require("./models/chatMessage");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 exports.signUp = async (req, res) => {
   try {
@@ -42,10 +44,20 @@ exports.logIn = async (req, res) => {
     }
     const isMatch = await user.comparePassword(req.body.password);
     if (!isMatch) throw new Error("Invalid Credentials");
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username: user.username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+
     res.status(200).send({
-      username: user.username,
-      birthdate: user.birthdate,
-      photo: user.photo,
+      token: token,
     });
   } catch (error) {
     console.error(error.message);

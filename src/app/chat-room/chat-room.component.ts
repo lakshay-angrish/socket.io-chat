@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";
 import { Router, ActivatedRoute, NavigationStart } from "@angular/router";
 import { ChatService } from "../chat.service";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Component({
   selector: "app-chat-room",
@@ -26,6 +26,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   observable1: any;
   observable2: any;
   observable3: any;
+  httpHeaders: HttpHeaders;
 
   constructor(
     private router: Router,
@@ -74,6 +75,17 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (
+      !sessionStorage.getItem("token") ||
+      !sessionStorage.getItem("username")
+    ) {
+      sessionStorage.clear();
+      this.router.navigateByUrl("login");
+    }
+    this.httpHeaders = new HttpHeaders({
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    });
+    this.username = sessionStorage.getItem("username");
     this.getChatHistory();
   }
 
@@ -126,6 +138,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.http
       .get("http://localhost:3000/getUsersInRoom?roomName=" + this.roomName, {
         responseType: "json",
+        headers: this.httpHeaders,
       })
       .subscribe(
         (response: any) => {
@@ -147,6 +160,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.http
       .get("http://localhost:3000/getUser?username=" + user, {
         responseType: "json",
+        headers: this.httpHeaders,
       })
       .subscribe(
         (response: any) => {
@@ -167,7 +181,10 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
 
   postChat(message) {
     this.http
-      .post("http://localhost:3000/postChat", message, { responseType: "text" })
+      .post("http://localhost:3000/postChat", message, {
+        responseType: "text",
+        headers: this.httpHeaders,
+      })
       .subscribe(
         (response) => {
           console.log(response);
@@ -182,6 +199,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     this.http
       .get("http://localhost:3000/getChatHistory?roomName=" + this.roomName, {
         responseType: "json",
+        headers: this.httpHeaders,
       })
       .subscribe(
         (response: any[]) => {
@@ -210,7 +228,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       this.http
         .delete(
           "http://localhost:3000/clearChatHistory?roomName=" + this.roomName,
-          { responseType: "text" }
+          { responseType: "text", headers: this.httpHeaders }
         )
         .subscribe(
           (response) => {

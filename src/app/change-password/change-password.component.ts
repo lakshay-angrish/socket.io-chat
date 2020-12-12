@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Component({
   selector: "app-change-password",
@@ -13,15 +13,22 @@ export class ChangePasswordComponent implements OnInit {
   newPassword: string;
   confirmNewPassword: string;
   errorMessage: string;
+  httpHeaders: HttpHeaders;
 
   constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit() {
-    this.username = sessionStorage.getItem("username");
-    if (this.username === null) {
-      alert("You must be logged in!");
-      this.router.navigateByUrl("");
+    if (
+      !sessionStorage.getItem("token") ||
+      !sessionStorage.getItem("username")
+    ) {
+      sessionStorage.clear();
+      this.router.navigateByUrl("login");
     }
+    this.httpHeaders = new HttpHeaders({
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    });
+    this.username = sessionStorage.getItem("username");
   }
 
   changePassword() {
@@ -35,6 +42,7 @@ export class ChangePasswordComponent implements OnInit {
       this.http
         .put("http://localhost:3000/changePassword", args, {
           responseType: "json",
+          headers: this.httpHeaders,
         })
         .subscribe(
           (response: any) => {
