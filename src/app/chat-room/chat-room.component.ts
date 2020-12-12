@@ -128,9 +128,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         responseType: "json",
       })
       .subscribe(
-        (response: any[]) => {
+        (response: any) => {
           this.usersInRoom = [];
-          const users: string[] = response[0].usersInRoom;
+          const users: string[] = response.usersInRoom;
           this.numberOfUsers = users.length;
 
           for (let i = 0; i !== this.numberOfUsers; i++) {
@@ -149,8 +149,8 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         responseType: "json",
       })
       .subscribe(
-        (response: any[]) => {
-          this.picture = response[0].photo;
+        (response: any) => {
+          this.picture = response.photo;
           const userData = {
             username: user,
             photo: this.picture,

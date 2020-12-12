@@ -5,6 +5,10 @@ const fs = require("fs");
 
 exports.signUp = async (req, res) => {
   try {
+    let user = await User.findOne({
+      username: req.body.username,
+    }).exec();
+    if (user) throw new Error("Username taken");
     let userData = {
       username: req.body.username,
       gender: req.body.gender,
@@ -16,7 +20,7 @@ exports.signUp = async (req, res) => {
     } else {
       userData.photo = req.file.path.split("\\")[2];
     }
-    const user = new User(userData);
+    user = new User(userData);
 
     await user.save();
     console.log("Signup Successful");
@@ -31,14 +35,18 @@ exports.logIn = async (req, res) => {
   try {
     const user = await User.findOne({
       username: req.body.username,
-      password: req.body.password,
     }).exec();
 
     if (!user) {
       throw new Error("Invalid Credentials");
     }
-    console.log(user);
-    res.status(200).send(user);
+    const isMatch = await user.comparePassword(req.body.password);
+    if (!isMatch) throw new Error("Invalid Credentials");
+    res.status(200).send({
+      username: user.username,
+      birthdate: user.birthdate,
+      photo: user.photo,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send(error.message);
@@ -47,20 +55,23 @@ exports.logIn = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-    const user = await User.updateOne(
-      {
-        username: req.body.username,
-        password: req.body.currentPassword,
-      },
-      {
-        password: req.body.newPassword,
-      }
-    ).exec();
+    const user = await User.findOne({
+      username: req.body.username,
+    }).exec();
+
+    if (!user) throw new Error("Invalid Credentials");
+
+    const isMatch = await user.comparePassword(req.body.currentPassword);
+    if (!isMatch) throw new Error("Invalid Credentials");
+
+    user.password = req.body.newPassword;
+    await user.save();
+
     console.log(user);
     res.status(200).send(user);
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
+    console.error(error.message);
+    res.status(500).send(error.message);
   }
 };
 
